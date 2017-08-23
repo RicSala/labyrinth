@@ -4,23 +4,24 @@ import com.imprender.Labyrinth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class Solver {
-	Labyrinth labyrinth;
-	String[][] map;
-	int[] initialPosition = new int[2];
-	List<Route> routes = new ArrayList<>();
+	private Labyrinth labyrinth;
+	private char[][] map;
+	private int[] initialPosition = new int[2];
+	private List<Route> routes = new ArrayList<>();
 
 
 	public Solver(Labyrinth labyrinth) {
 		this.labyrinth = labyrinth;
-		this.map = new String[labyrinth.getMap().getHeight()][labyrinth.getMap().getWidth()];
+		this.map = new char[labyrinth.getMap().length][labyrinth.getMap()[0].length];
 		initialPosition[0] = labyrinth.getINITIAL_ESCAPER_POSITION()[0];
 		initialPosition[1] = labyrinth.getINITIAL_ESCAPER_POSITION()[1];
 	}
 
-	//TODO: me salta una concurrentmodificationexception...
+	//TODO: me salta una concurrentmodificationexception... ¿Cómo puedo modificar una list MIENTRAS la recorro? ¿Cómo evito la excepción? Recurrencia?
 	public Route solve() throws InterruptedException {
 		Route winningRoute = null;
 		boolean solved = false;
@@ -28,7 +29,7 @@ public class Solver {
 		while (!solved) {
 			for (Route route : routes) {
 				String options = route.explore(labyrinth);
-				if (options == "") {
+				if (Objects.equals(options, "")) {
 					routes.remove(route);
 				} else if (options.length()==1) {
 					route.advance(options);
@@ -48,8 +49,6 @@ public class Solver {
 				TimeUnit.SECONDS.sleep(1);
 			}}
 		}
-		System.out.println("I am doing thins...");
-
 		return winningRoute;
 	}
 

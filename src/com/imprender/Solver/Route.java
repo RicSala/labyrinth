@@ -12,16 +12,16 @@ public class Route {
 
 	public String explore(Labyrinth labyrinth) {
 		String options = "";
-		if (labyrinth.getMap().get(head[0] - 1, head[1]) == ' ') {
+		if (labyrinth.getContent(head[0] - 1, head[1]) == ' ') {
 			options += 'U';
 		}
-		if (labyrinth.getMap().get(head[0], head[1] + 1) == ' ') {
+		if (labyrinth.getContent(head[0], head[1] + 1) == ' ') {
 			options += 'R';
 		}
-		if (labyrinth.getMap().get(head[0] + 1, head[1]) == ' ') {
+		if (labyrinth.getContent(head[0] + 1, head[1]) == ' ') {
 			options += 'D';
 		}
-		if (labyrinth.getMap().get(head[0], head[1] - 1) == ' ') {
+		if (labyrinth.getContent(head[0], head[1] - 1) == ' ') {
 			options += 'L';
 		}
 		return options;

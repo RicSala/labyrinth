@@ -11,7 +11,7 @@ public class LabyrinthsReaderTest {
 
 		String labyrinthString = "X XXXXX\nX XX XX\nX    XX\nXX XX X\nXX  o X\nXXXXXXX";
 
-		Field labyrinth = new Field(new char[6][7]);
+		char[][] labyrinth = new char[6][7];
 		LabyrinthsReader reader = new LabyrinthsReader();
 		Labyrinth labyrinthByReader = reader.readLabyrinth(labyrinthString);
 

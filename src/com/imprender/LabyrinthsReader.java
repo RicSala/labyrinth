@@ -34,7 +34,7 @@ public class LabyrinthsReader {
 				}
 			}
 		}
-		return new Labyrinth(new Field(map), 'X', initialEscaperPosition, coinPosition);
+		return new Labyrinth(map, 'X', initialEscaperPosition, coinPosition);
 	}
 
 

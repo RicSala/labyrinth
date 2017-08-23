@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class Game {
-	Labyrinth labyrinth;
-	Escaper escaper;
-	Prompter prompter;
+	private Labyrinth labyrinth;
+	private Escaper escaper;
+	private Prompter prompter;
 	private boolean out = false;
 
 	/**
@@ -31,7 +31,9 @@ public class Game {
 	 */
 	public void run() throws IllegalMoveException {
 		while (!out) {
-			labyrinth.getMap().getDiscoveredMap(labyrinth.getDiscovered()).markPositionInMap(escaper.getVPosition(), escaper.getHPosition()).draw();
+			char[][] map = GameMapUtils.getDiscoveredMap(labyrinth.getDiscovered(), labyrinth.getMap());
+			map = GameMapUtils.markPositionInMap(map, new int[]{escaper.getVPosition(), escaper.getHPosition()}, 'o');
+			GameMapUtils.draw(map);
 			turn();
 		}
 		prompter.winPrompt();
