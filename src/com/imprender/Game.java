@@ -4,81 +4,114 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class Game {
-
-	String labyrinthString = "X XXXXX\nX XX XX\nX    XX\nXX XX X\nXX    X\nXXXXXoX";
-	LabyrinthsReader reader = new LabyrinthsReader();
-	Labyrinth labyrinth = reader.readLabyrinth("labyrinth.txt", Charset.defaultCharset()); //todo: Por alguna razón si lo hago así me coge un caracter más del String
-//	Labyrinth labyrinth = reader.readLabyrinth(labyrinthString);
-	Escaper escaper = new Escaper(labyrinth.getINITIAL_POSITION()[0], labyrinth.getINITIAL_POSITION()[1]);
-	Prompter prompter = new Prompter();
+	Labyrinth labyrinth;
+	Escaper escaper;
+	Prompter prompter;
 	private boolean out = false;
 
+	/**
+	 * Inizializes the game: reads the file and creates the labyrinth, instantiates the escaper (player)
+	 * and the prompter.
+	 *
+	 * @throws IOException
+	 */
 	public Game() throws IOException {
+		String labyrinthString = "X XXXXX\nX XX XX\nX    XX\nXX XX X\nXX    X\nXXXXXoX";
+		LabyrinthsReader reader = new LabyrinthsReader();
+		labyrinth = reader.readLabyrinth("labyrinth.txt", Charset.defaultCharset()); //todo: Por alguna razón si lo hago así me coge un caracter más del String
+		escaper = new Escaper(labyrinth.getINITIAL_ESCAPER_POSITION()[0], labyrinth.getINITIAL_ESCAPER_POSITION()[1]);
+		prompter = new Prompter();
+		//	Labyrinth labyrinth = reader.readLabyrinth(labyrinthString);
+
 	}
 
-	public void run() {
+
+	/**
+	 * Draw the discovered map and keep the game running until the player wins.
+	 */
+	public void run() throws IllegalMoveException {
 		while (!out) {
 			labyrinth.getMap().getDiscoveredMap(labyrinth.getDiscovered()).markPositionInMap(escaper.getVPosition(), escaper.getHPosition()).draw();
-			out = turn();
+			turn();
 		}
 		prompter.winPrompt();
 	}
 
 
+	/**
+	 * Get the user chosen destination and performs the movement if appropiate
+	 *
+	 * @return true if the escaper gets out of the labyrinth
+	 */
+	public void turn() throws IllegalMoveException {
+		//destination holds the choosen destiny to check if its available/wall/outOfRage (so to avoid nullPointException)
+		// Before move, destination is inizialized as the current position
 
-	public boolean turn() {
+		int[] destination = getDestination();
+		if (validateDestination(destination)) {
+			escaper.set(destination);
+		}
+	}
+
+	/**
+	 * Check the destination chosen and perform the appropiate action if: escaped / wall / valid move [coin]
+	 * @param destination to check
+	 * @return boolen true if the escaper can move, false otherwise (wall or out)
+	 */
+	private boolean validateDestination(int[] destination) {
+		//Once the destination is updated, we check what kind of destination has been chosen:
+		// 1) Out of the map --> Win
+		if (labyrinth.outOfBorders(destination)) {
+			out = true;
+			return false;
+		}
+		// 2) Wall --> The escaper position does not change
+		else if (labyrinth.isWall(destination[0], destination[1])) {
+			prompter.wallHit();
+			labyrinth.getDiscovered()[destination[0]][destination[1]] = true;
+			return false;
+		} else {
+
+			// 4) Coin --> The escaper collects the coin and...
+			if (labyrinth.isCoin(destination[0], destination[1])) {
+				prompter.coinFound();
+			}
+			labyrinth.getDiscovered()[destination[0]][destination[1]] = true;
+			return true;
+		}
+	}
+
+
+
+	/**
+	 * Prompt the user for a movement and
+	 * @return the choosen destination (without validating that is appropiate)
+	 */
+	private int[] getDestination() {
 		char move;
-		int[] moveDestiny = new int[]{escaper.getVPosition(), escaper.getHPosition()};
-
+		int[] destination = new int[]{escaper.getVPosition(), escaper.getHPosition()};
 		try {
 			move = prompter.promptNewTurn();
-
+			//change destination acordingly to the chosen move
 			switch (move) {
 				case 'u':
-					moveDestiny[0]--;
+					destination[0]--;
 					break;
 				case 'd':
-					moveDestiny[0]++;
+					destination[0]++;
 					break;
 				case 'r':
-					moveDestiny[1]++;
+					destination[1]++;
 					break;
 				case 'l':
-					moveDestiny[1]--;
+					destination[1]--;
 					break;
-			}
-
-			if (labyrinth.outOfBorders(moveDestiny)) {
-				return true;
-			} else if (labyrinth.isWall(moveDestiny[0], moveDestiny[1])) {
-				prompter.wallHit();
-			} else {
-				if (labyrinth.isCoin(moveDestiny[0], moveDestiny[1])) {
-					prompter.coinFound();
-				}
-				switch (move) {
-					case 'u':
-						escaper.moveUp();
-						break;
-					case 'd':
-						escaper.moveDown();
-						break;
-					case 'r':
-						escaper.moveRight();
-						break;
-					case 'l':
-						escaper.moveLeft();
-						break;
-				}
 			}
 
 		} catch (
-				IOException e)
-
-		{
+				IOException e) {
 			e.printStackTrace();
 		}
-		labyrinth.getDiscovered()[moveDestiny[0]][moveDestiny[1]] = true;
-		return false;
+		return destination;
 	}
 }

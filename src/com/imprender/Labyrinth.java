@@ -1,13 +1,21 @@
 package com.imprender;
 
 public class Labyrinth {
-	private final int[] INITIAL_POSITION;
+	private final int[] INITIAL_ESCAPER_POSITION;
 	private final char WALL_CHARACTER;
-	private final int[] coinPosition;
-	private Field map;
+	private final int[] COIN_POSITION;
+	private Field map;                              //Constains the game field
 
-	private boolean[][] discovered;
+	private boolean[][] discovered;                 //Field with true values there where the escaper has already been
 
+
+	/**
+	 *
+	 * @param map
+	 * @param WALL_CHARACTER
+	 * @param INITIAL_POSITION
+	 * @param coinPosition
+	 */
 	public Labyrinth(Field map, char WALL_CHARACTER, int[] INITIAL_POSITION, int[] coinPosition) {
 		this.map = map;
 		discovered = new boolean[map.getHeight()][map.getWidth()];
@@ -19,8 +27,8 @@ public class Labyrinth {
 		}
 		discovered[INITIAL_POSITION[0]][INITIAL_POSITION[1]] =true;
 		this.WALL_CHARACTER = WALL_CHARACTER;
-		this.INITIAL_POSITION = INITIAL_POSITION;
-		this.coinPosition = coinPosition;
+		this.INITIAL_ESCAPER_POSITION = INITIAL_POSITION;
+		this.COIN_POSITION = coinPosition;
 	}
 
 
@@ -29,22 +37,16 @@ public class Labyrinth {
 	}
 
 	public boolean isWall(int vPosition, int hPosition) {
-		return map.get(vPosition, hPosition) == getWALL_CHARACTER();
+		return map.get(vPosition, hPosition) == WALL_CHARACTER;
 	}
 
 	public char getWALL_CHARACTER() {
 		return WALL_CHARACTER;
 	}
 
-	public int[] getINITIAL_POSITION() {
-		return INITIAL_POSITION;
+	public int[] getINITIAL_ESCAPER_POSITION() {
+		return INITIAL_ESCAPER_POSITION;
 	}
-
-
-
-
-
-
 
 	public boolean outOfBorders(int[] moveDestiny) {
 
@@ -59,6 +61,6 @@ public class Labyrinth {
 	}
 
 	public boolean isCoin(int vPosition, int hPosition) {
-		return coinPosition[0] == vPosition && coinPosition[1] == hPosition;
+		return COIN_POSITION[0] == vPosition && COIN_POSITION[1] == hPosition;
 	}
 }
