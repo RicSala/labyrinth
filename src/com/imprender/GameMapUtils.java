@@ -50,7 +50,7 @@ public class GameMapUtils {
 	 * @param rightDownCorner (int[2]) --> second coordinate to delimitate the size of the copy
 	 * @return (char[][]) a copy of map
 	 */
-	private char[][] getCopyMap(char[][] map, int[] lefttUpCorner, int[] rightDownCorner) {
+	public static char[][] getCopyMap(char[][] map, int[] lefttUpCorner, int[] rightDownCorner) {
 		int height = rightDownCorner[0] - lefttUpCorner[0] + 1;
 		int width = rightDownCorner[1] - lefttUpCorner[1] + 1;
 
@@ -75,5 +75,19 @@ public class GameMapUtils {
 			}
 			System.out.println();
 		}
+	}
+
+	/**
+	 * Given a target coordinate and a map
+	 * @param moveDestiny (int[])
+	 * @param map (char[][])
+	 * @return true if the target coordinate is out of the labyrinth (used to avoid get an exception)
+	 */
+	public static boolean outOfBorders(char[][] map, int[] moveDestiny) {
+
+		boolean outOfBorders = !((moveDestiny[0] >= 0 && moveDestiny[0] < map.length) &&
+				(moveDestiny[1] >= 0 && moveDestiny[1] < map[0].length));
+
+		return outOfBorders;
 	}
 }

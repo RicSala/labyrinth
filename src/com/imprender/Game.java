@@ -18,7 +18,7 @@ public class Game {
 	public Game() throws IOException {
 		String labyrinthString = "X XXXXX\nX XX XX\nX    XX\nXX XX X\nXX    X\nXXXXXoX";
 		LabyrinthsReader reader = new LabyrinthsReader();
-		labyrinth = reader.readLabyrinth("labyrinth.txt", Charset.defaultCharset()); //todo: Por alguna razón si lo hago así me coge un caracter más del String
+		labyrinth = reader.readLabyrinth("labyrinth.txt", Charset.defaultCharset());
 		escaper = new Escaper(labyrinth.getINITIAL_ESCAPER_POSITION()[0], labyrinth.getINITIAL_ESCAPER_POSITION()[1]);
 		prompter = new Prompter();
 		//	Labyrinth labyrinth = reader.readLabyrinth(labyrinthString);
@@ -67,14 +67,14 @@ public class Game {
 			out = true;
 			return false;
 		}
-		// 2) Wall --> The escaper position does not change
+		// 2) Wall --> destional is a wall, method returns null
 		else if (labyrinth.isWall(destination[0], destination[1])) {
 			prompter.wallHit();
 			labyrinth.getDiscovered()[destination[0]][destination[1]] = true;
 			return false;
 		} else {
 
-			// 4) Coin --> The escaper collects the coin and...
+			// 3) Coin --> The escaper collects the coin and...
 			if (labyrinth.isCoin(destination[0], destination[1])) {
 				prompter.coinFound();
 			}

@@ -4,7 +4,7 @@ public class Labyrinth {
 	private final int[] INITIAL_ESCAPER_POSITION;
 	private final char WALL_CHARACTER;
 	private final int[] COIN_POSITION;
-	private char[][] map;                              //Contains the game field
+	private char[][] map;
 
 	private boolean[][] discovered;
 
@@ -72,18 +72,11 @@ public class Labyrinth {
 
 	/**
 	 * Given a target coordinate of
-	 * @param moveDestiny (int[])
+	 * @param coordinate (int[])
 	 * @return true if the target coordinate is out of the labyrinth (used to avoid get an exception)
 	 */
-	public boolean outOfBorders(int[] moveDestiny) {
-
-		boolean outOfBorders = !((moveDestiny[0] >= 0 && moveDestiny[0] < map.length) &&
-				(moveDestiny[1] >= 0 && moveDestiny[1] < map[0].length));
-
-		return outOfBorders;
+	public boolean outOfBorders(int[] coordinate) {
+		return GameMapUtils.outOfBorders(map, coordinate);
 	}
 
-	public char getContent(int vCoordinate, int hCoordinate) {
-		return map[vCoordinate][hCoordinate];
-	}
 }

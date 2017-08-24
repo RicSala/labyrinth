@@ -15,7 +15,7 @@ public class LabyrinthsReader {
 	 */
 	public Labyrinth readLabyrinth(String labyrinthString) {
 		String[] lines = labyrinthString.split("\\n");
-		char[][] map = new char[lines.length][lines[0].length() - 1];//TODO: Aquí tengo que quitarle un caracter para que no se salga
+		char[][] map = new char[lines.length][lines[0].length() - 1];//TODO: Ferran, Aquí tengo que quitarle un caracter para que no se salga. Le está dando a la línea tamaño n + 1...
 		int[] initialEscaperPosition = new int[2];
 		int[] coinPosition = new int[2];
 
@@ -40,13 +40,13 @@ public class LabyrinthsReader {
 
 	/**
 	 * Overloads the method readLabyrinth to read it from a File instead of from a String
-	 * @param Path of the file to read
+	 * @param path of the file to read
 	 * @param encoding ??
 	 * @return String containing the labyrinth
 	 * @throws IOException
 	 */
-	public Labyrinth readLabyrinth(String Path, Charset encoding) throws IOException {
-		String labyrinthString = readFile("labyrinth.txt", Charset.defaultCharset());
+	public Labyrinth readLabyrinth(String path, Charset encoding) throws IOException {
+		String labyrinthString = readFile(path, Charset.defaultCharset());
 		return readLabyrinth(labyrinthString);
 
 	}
@@ -76,6 +76,7 @@ public class LabyrinthsReader {
 		byte[] enconded = Files.readAllBytes(Paths.get(path));
 		return new String(enconded, encoding);
 	}
+
 
 }
 
