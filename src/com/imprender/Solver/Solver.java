@@ -2,6 +2,7 @@ package com.imprender.Solver;
 
 import com.imprender.GameMapUtils;
 import com.imprender.Labyrinth;
+import com.imprender.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +12,14 @@ import java.util.Objects;
 public class Solver {
 	private Labyrinth labyrinth;
 	private char[][] map;
-	private int[] initialPosition = new int[2];
+	private Point initialPosition;
 	private List<Route> routes = new ArrayList<>();
 
 
 	public Solver(Labyrinth labyrinth) {
 		this.labyrinth = labyrinth;
 		this.map = labyrinth.getMap().clone();
-		initialPosition[0] = labyrinth.getINITIAL_ESCAPER_POSITION()[0];
-		initialPosition[1] = labyrinth.getINITIAL_ESCAPER_POSITION()[1];
+		initialPosition = labyrinth.getInitialEscaperPosition();
 	}
 
 	//TODO: me salta una concurrentmodificationexception... ¿Cómo puedo modificar una list MIENTRAS la recorro? ¿Cómo evito la excepción? Recurrencia?
@@ -40,7 +40,7 @@ public class Solver {
 
 		//Add a first route whose head is in the initial position of the labyrinth
 		routes.add(new Route(initialPosition, ""));
-		GameMapUtils.markPositionInMap(map, new int[]{initialPosition[0], initialPosition[1]}, 'o');
+		GameMapUtils.markPositionInMap(map, initialPosition, 'o');
 		GameMapUtils.draw(map);
 		System.out.println();
 
@@ -56,12 +56,12 @@ public class Solver {
 
 					String options = route.explore(labyrinth.getMap());
 					if (Objects.equals(options, "")) {
-						map[route.getHead()[0]][route.getHead()[1]] = 'X';
+						map[route.getHead().getY()][route.getHead().getX()] = 'X';
 						iter.remove();
 					} else if (options.length() == 1) {
-						map[route.getHead()[0]][route.getHead()[1]] = 'X';
+						map[route.getHead().getY()][route.getHead().getX()] = 'X';
 						route.advance(options);
-						GameMapUtils.markPositionInMap(map, new int[]{route.getHead()[0], route.getHead()[1]}, 'o');
+						GameMapUtils.markPositionInMap(map, route.getHead(), 'o');
 					} else {
 						procreate(iter, route, options);
 					}
@@ -84,25 +84,25 @@ public class Solver {
 	 * @param options (String) available directions
 	 */
 	private void procreate(ListIterator<Route> iter, Route route, String options) {
-		map[route.getHead()[0]][route.getHead()[1]] = 'X';
+		map[route.getHead().getY()][route.getHead().getX()] = 'X';
 		iter.remove();
 		if (options.contains("U")) {
-			iter.add(new Route(new int[]{route.getHead()[0] - 1, route.getHead()[1]}, route.getDirections() + "U"));
+			iter.add(new Route(new Point(route.getHead().getY() - 1, route.getHead().getX()), route.getDirections() + "U"));
 		}
 		if (options.contains("R")) {
-			iter.add(new Route(new int[]{route.getHead()[0], route.getHead()[1] + 1}, route.getDirections() + "R"));
+			iter.add(new Route(new Point(route.getHead().getY(), route.getHead().getX() + 1), route.getDirections() + "R"));
 		}
 		if (options.contains("D")) {
-			iter.add(new Route(new int[]{route.getHead()[0] + 1, route.getHead()[1]}, route.getDirections() + "D"));
+			iter.add(new Route(new Point(route.getHead().getY() + 1, route.getHead().getX()), route.getDirections() + "D"));
 		}
 		if (options.contains("L")) {
-			iter.add(new Route(new int[]{route.getHead()[0], route.getHead()[1] - 1}, route.getDirections() + "L"));
+			iter.add(new Route(new Point(route.getHead().getY(), route.getHead().getX() - 1), route.getDirections() + "L"));
 		}
 	}
 
 	private void drawHeads(char[][] map, List<Route> routes) {
 		for (Route route : routes) {
-			GameMapUtils.markPositionInMap(map, new int[]{route.getHead()[0], route.getHead()[1]},'o');
+			GameMapUtils.markPositionInMap(map, route.getHead(),'o');
 		}
 	}
 
@@ -113,10 +113,10 @@ public class Solver {
 	 * @return true of the route's head is in any of the borders of the map.
 	 */
 	public boolean isAtBorder(Route route) {
-		return (GameMapUtils.outOfBorders(map, new int[]{route.getHead()[0] + 1, route.getHead()[1]}) ||
-				GameMapUtils.outOfBorders(map, new int[]{route.getHead()[0] - 1, route.getHead()[1]}) ||
-				GameMapUtils.outOfBorders(map, new int[]{route.getHead()[0], route.getHead()[1] + 1}) ||
-				GameMapUtils.outOfBorders(map, new int[]{route.getHead()[0], route.getHead()[1] - 1}));
+		return (GameMapUtils.outOfBorders(map, new Point(route.getHead().getY() + 1, route.getHead().getX())) ||
+				GameMapUtils.outOfBorders(map, new Point(route.getHead().getY() - 1, route.getHead().getX())) ||
+				GameMapUtils.outOfBorders(map, new Point(route.getHead().getY(), route.getHead().getX() + 1)) ||
+				GameMapUtils.outOfBorders(map, new Point(route.getHead().getY(), route.getHead().getX() - 1)));
 	}
 
 }

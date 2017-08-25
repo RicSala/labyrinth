@@ -20,4 +20,6 @@ public class LabyrinthsReaderTest {
 
 	}
 
+	//Todo: checkLabyrinthAfterMoves( "X XX\nX oX\nXXXX",  "LU",  "XoXX\nX  X\nXXXX" )
+
 }

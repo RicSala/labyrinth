@@ -16,10 +16,9 @@ public class Game {
 	 * @throws IOException
 	 */
 	public Game() throws IOException {
-		String labyrinthString = "X XXXXX\nX XX XX\nX    XX\nXX XX X\nXX    X\nXXXXXoX";
 		LabyrinthsReader reader = new LabyrinthsReader();
 		labyrinth = reader.readLabyrinth("labyrinth.txt", Charset.defaultCharset());
-		escaper = new Escaper(labyrinth.getINITIAL_ESCAPER_POSITION()[0], labyrinth.getINITIAL_ESCAPER_POSITION()[1]);
+		escaper = new Escaper(labyrinth.getInitialEscaperPosition());
 		prompter = new Prompter();
 		//	Labyrinth labyrinth = reader.readLabyrinth(labyrinthString);
 
@@ -32,7 +31,7 @@ public class Game {
 	public void run() throws IllegalMoveException {
 		while (!out) {
 			char[][] map = GameMapUtils.getDiscoveredMap(labyrinth.getDiscovered(), labyrinth.getMap());
-			map = GameMapUtils.markPositionInMap(map, new int[]{escaper.getVPosition(), escaper.getHPosition()}, 'o');
+			map = GameMapUtils.markPositionInMap(map, escaper.getCoordinates(), 'o');
 			GameMapUtils.draw(map);
 			turn();
 		}
@@ -49,7 +48,7 @@ public class Game {
 		//destination holds the choosen destiny to check if its available/wall/outOfRage (so to avoid nullPointException)
 		// Before move, destination is inizialized as the current position
 
-		int[] destination = getDestination();
+		Point destination = getDestination();
 		if (validateDestination(destination)) {
 			escaper.set(destination);
 		}
@@ -57,10 +56,11 @@ public class Game {
 
 	/**
 	 * Check the destination chosen and perform the appropiate action if: escaped / wall / valid move [coin]
+	 *
 	 * @param destination to check
 	 * @return boolen true if the escaper can move, false otherwise (wall or out)
 	 */
-	private boolean validateDestination(int[] destination) {
+	private boolean validateDestination(Point destination) {
 		//Once the destination is updated, we check what kind of destination has been chosen:
 		// 1) Out of the map --> Win
 		if (labyrinth.outOfBorders(destination)) {
@@ -68,45 +68,50 @@ public class Game {
 			return false;
 		}
 		// 2) Wall --> destional is a wall, method returns null
-		else if (labyrinth.isWall(destination[0], destination[1])) {
+		else if (labyrinth.isWall(destination)) {
 			prompter.wallHit();
-			labyrinth.getDiscovered()[destination[0]][destination[1]] = true;
+			labyrinth.getDiscovered()[destination.getY()][destination.getX()] = true;  //TODO: por qué aquí puedo modificar con un get?
 			return false;
 		} else {
 
 			// 3) Coin --> The escaper collects the coin and...
-			if (labyrinth.isCoin(destination[0], destination[1])) {
+			if (labyrinth.isCoin(destination)) {
 				prompter.coinFound();
 			}
-			labyrinth.getDiscovered()[destination[0]][destination[1]] = true;
+			labyrinth.getDiscovered()[destination.getY()][destination.getX()] = true;
 			return true;
 		}
 	}
 
-
+	//Todo: Por cierto, te recomiendo que Labyrinth sea una clase que contiene el mapa y la posición
+	// actual del jugador (de hecho casi ya lo tienes así). Así Game le puede decir a Labyrinth hacia dónde quiere moverse,
+	// y será Labyrinth quien decida si ese movimiento es posible (si no, por ejemplo simplemente dejamos el jugador en la misma posición).
+	// Game no tiene por qué saber los detalles del Labyrinth (me refiero a la función `validateDestination` por ejemplo)
+	//Todo: @ric Cuanto más simples sean las clases mejor
 
 	/**
 	 * Prompt the user for a movement and
+	 *
 	 * @return the choosen destination (without validating that is appropiate)
 	 */
-	private int[] getDestination() {
+	private Point getDestination() {
 		char move;
-		int[] destination = new int[]{escaper.getVPosition(), escaper.getHPosition()};
+		Point destination = new Point(escaper.getX(), escaper.getY());
 		try {
 			move = prompter.promptNewTurn();
 			//change destination acordingly to the chosen move
 			switch (move) {
 				case 'u':
-					destination[0]--;
+					destination.setY(destination.getY() - 1);
 					break;
 				case 'd':
-					destination[0]++;
+					destination.setY(destination.getY() + 1);
 					break;
 				case 'r':
-					destination[1]++;
+					destination.setX(destination.getX() + 1);
 					break;
 				case 'l':
-					destination[1]--;
+					destination.setX(destination.getX() - 1);
 					break;
 			}
 

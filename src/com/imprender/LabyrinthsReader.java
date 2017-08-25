@@ -16,19 +16,17 @@ public class LabyrinthsReader {
 	public Labyrinth readLabyrinth(String labyrinthString) {
 		String[] lines = labyrinthString.split("\\n");
 		char[][] map = new char[lines.length][lines[0].length() - 1];//TODO: Ferran, Aquí tengo que quitarle un caracter para que no se salga. Le está dando a la línea tamaño n + 1...
-		int[] initialEscaperPosition = new int[2];
-		int[] coinPosition = new int[2];
+		Point initialEscaperPosition = null;
+		Point coinPosition = null;
 
 		for (int i = 0; i < lines.length; i++) {
 			for (int j = 0; j < lines[0].length() - 1; j++) { //TODO: Aquí tengo que quitarle un caracter para que no se salga
 				if (lines[i].charAt(j) == 'o') {
 					map[i][j] = ' ';
-					initialEscaperPosition[0] = i;
-					initialEscaperPosition[1] = j;
+					initialEscaperPosition = new Point(j, i);
 				} else if (lines[i].charAt(j) == '0') {
 					map[i][j] = ' ';
-					coinPosition[0] = i;
-					coinPosition[1] = j;
+					coinPosition = new Point(j, i);
 				} else {
 					map[i][j] = lines[i].charAt(j);
 				}

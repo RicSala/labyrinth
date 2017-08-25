@@ -1,23 +1,23 @@
 package com.imprender;
 
 public class Labyrinth {
-	private final int[] INITIAL_ESCAPER_POSITION;
-	private final char WALL_CHARACTER;
-	private final int[] COIN_POSITION;
+	private final Point initialEscaperPosition;
+	private final char wallCharacter;
+	private final Point coinPosition;
 	private char[][] map;
 
 	private boolean[][] discovered;
 
 
 	/**
-	 * @param map              (String[][]): playing field of the game
-	 * @param WALL_CHARACTER   (char): character that represents a wall
-	 * @param INITIAL_POSITION (int[2]): initial position of the player
+	 * @param map             (String[][]): playing field of the game
+	 * @param wallCharacter   (char): character that represents a wall
+	 * @param initialPosition (int[2]): initial position of the player
 	 * @param coinPosition     (int[2]): position of the coin if it exists
 	 *                         discovered (boolean[][]): GameMapUtils of the same size of the game field keep the places the escaper has already
 	 *                         discovered
 	 */
-	public Labyrinth(char[][] map, char WALL_CHARACTER, int[] INITIAL_POSITION, int[] coinPosition) {
+	public Labyrinth(char[][] map, char wallCharacter, Point initialPosition, Point coinPosition) {
 		this.map = map;
 		discovered = new boolean[map.length][map[0].length];
 
@@ -28,10 +28,10 @@ public class Labyrinth {
 			}
 		}
 		//...except the initial position
-		discovered[INITIAL_POSITION[0]][INITIAL_POSITION[1]] = true;
-		this.WALL_CHARACTER = WALL_CHARACTER;
-		this.INITIAL_ESCAPER_POSITION = INITIAL_POSITION;
-		this.COIN_POSITION = coinPosition;
+		discovered[initialPosition.getY()][initialPosition.getX()] = true;
+		this.wallCharacter = wallCharacter;
+		this.initialEscaperPosition = initialPosition;
+		this.coinPosition = coinPosition;
 	}
 
 
@@ -39,8 +39,8 @@ public class Labyrinth {
 		return map;
 	}
 
-	public int[] getINITIAL_ESCAPER_POSITION() {
-		return INITIAL_ESCAPER_POSITION;
+	public Point getInitialEscaperPosition() {
+		return initialEscaperPosition;
 	}
 
 	public boolean[][] getDiscovered() {
@@ -50,23 +50,21 @@ public class Labyrinth {
 	/**
 	 * Given a coordinate composed by:
 	 *
-	 * @param vPosition to check
-	 * @param hPosition " " " "
+	 * @param coordinates to check
 	 * @return true if the labyrinth has a wall in that coordinate
 	 */
-	public boolean isWall(int vPosition, int hPosition) {
-		return map[vPosition][hPosition] == WALL_CHARACTER;
+	public boolean isWall(Point coordinates) {
+		return map[coordinates.getY()][coordinates.getX()] == wallCharacter;
 	}
 
 	/**
 	 * Given a coordinate composed by:
 	 *
-	 * @param vPosition to check
-	 * @param hPosition " " " "
+	 * @param coordinates to check
 	 * @return true if the labyrinth has a coin in that coordinate
 	 */
-	public boolean isCoin(int vPosition, int hPosition) {
-		return COIN_POSITION[0] == vPosition && COIN_POSITION[1] == hPosition;
+	public boolean isCoin(Point coordinates) {
+		return coordinates == coinPosition;
 	}
 
 
@@ -75,7 +73,7 @@ public class Labyrinth {
 	 * @param coordinate (int[])
 	 * @return true if the target coordinate is out of the labyrinth (used to avoid get an exception)
 	 */
-	public boolean outOfBorders(int[] coordinate) {
+	public boolean outOfBorders(Point coordinate) {
 		return GameMapUtils.outOfBorders(map, coordinate);
 	}
 

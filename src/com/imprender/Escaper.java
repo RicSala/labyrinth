@@ -6,60 +6,59 @@ package com.imprender;
  * hCoordinate: Horizontal " " " "
  */
 public class Escaper {
-	private int vCoordinate;
-	private int hCoordinate;
+	private Point coordinates;
 
 
-	public Escaper(int vPosition, int hPosition) {
-		this.vCoordinate = vPosition;
-		this.hCoordinate = hPosition;
+	public Escaper(Point coordinates) {
+		this.coordinates = coordinates;
 	}
 
-	public int getVPosition() {
-		return vCoordinate;
+	public int getY() {
+		return coordinates.getY();
 	}
 
-	public int getHPosition() {
-		return hCoordinate;
+	public int getX() {
+		return coordinates.getX();
 	}
-
 
 
 	//	------ ESCAPER MOVES ------
 	public void moveUp() {
-		this.vCoordinate--;
+		coordinates.moveUp();
 	}
 
 	public void moveDown() {
-		this.vCoordinate++;
+		coordinates.moveDown();
 	}
 
 	public void moveRight() {
-		this.hCoordinate++;
+		coordinates.moveRight();
 	}
 
 	public void moveLeft() {
-		this.hCoordinate--;
+		coordinates.moveLeft();
 	}
 
 	/**
 	 * Given a current position of the escaper, this methods moves it if the destination is adyacent
+	 *
 	 * @param destination to move
 	 * @throws IllegalMoveException in case destionation is not adyacent
 	 */
-	public void set(int[] destination) throws IllegalMoveException {
+	public void set(Point destination) throws IllegalMoveException {
 
-		int moveDistance = Math.abs((destination[0] - vCoordinate)) +
-				Math.abs(destination[1] - hCoordinate);
+		int moveDistance = Math.abs((destination.getY() - coordinates.getY())) +
+				Math.abs(destination.getX() - coordinates.getX());
 
 		if (moveDistance > 1) {
 			throw new IllegalMoveException();
 		} else {
-			vCoordinate = destination[0];
-			hCoordinate = destination[1];
+			coordinates = destination;
 		}
 	}
+
+	public Point getCoordinates() {
+		return coordinates;
+	}
 	//	------ END OF ESCAPER MOVES ------
-
-
 }

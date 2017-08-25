@@ -37,8 +37,8 @@ public class GameMapUtils {
 	 * @param mark char
 	 * @return mark the map in the coordinate with the mark
 	 */
-	public static char[][] markPositionInMap(char[][] map, int[] coordinate,  char mark) {
-		map[coordinate[0]][coordinate[1]] = mark;
+	public static char[][] markPositionInMap(char[][] map, Point coordinate, char mark) {
+		map[coordinate.getY()][coordinate.getX()] = mark;
 		return map;
 	}
 
@@ -50,14 +50,14 @@ public class GameMapUtils {
 	 * @param rightDownCorner (int[2]) --> second coordinate to delimitate the size of the copy
 	 * @return (char[][]) a copy of map
 	 */
-	public static char[][] getCopyMap(char[][] map, int[] lefttUpCorner, int[] rightDownCorner) {
-		int height = rightDownCorner[0] - lefttUpCorner[0] + 1;
-		int width = rightDownCorner[1] - lefttUpCorner[1] + 1;
+	public static char[][] getCopyMap(char[][] map, Point lefttUpCorner, Point rightDownCorner) {
+		int height = rightDownCorner.getY() - lefttUpCorner.getY() + 1;
+		int width = rightDownCorner.getX() - lefttUpCorner.getX() + 1;
 
 		char[][] copyMap = new char[height][width];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				copyMap[i][j] = map[lefttUpCorner[0] + i][lefttUpCorner[1] + j];
+				copyMap[i][j] = map[lefttUpCorner.getY() + i][lefttUpCorner.getX() + j];
 			}
 		}
 		return copyMap;
@@ -79,14 +79,14 @@ public class GameMapUtils {
 
 	/**
 	 * Given a target coordinate and a map
-	 * @param moveDestiny (int[])
+	 * @param coordinates (int[])
 	 * @param map (char[][])
 	 * @return true if the target coordinate is out of the labyrinth (used to avoid get an exception)
 	 */
-	public static boolean outOfBorders(char[][] map, int[] moveDestiny) {
+	public static boolean outOfBorders(char[][] map, Point coordinates) {
 
-		boolean outOfBorders = !((moveDestiny[0] >= 0 && moveDestiny[0] < map.length) &&
-				(moveDestiny[1] >= 0 && moveDestiny[1] < map[0].length));
+		boolean outOfBorders = !((coordinates.getY() >= 0 && coordinates.getY() < map.length) &&
+				(coordinates.getX() >= 0 && coordinates.getX() < map[0].length));
 
 		return outOfBorders;
 	}
